@@ -179,7 +179,7 @@ class BookController extends Controller
 
             if ($request->current_page > $book->total_pages) {
                 return response()->json([
-                    'message' => 'The current page cannot be greater than the total number of pages',
+                    'message' => 'The current page cannot be greater than the total number of pages (' . $book->total_pages . ')',
                 ], 400);
             }
 
@@ -205,4 +205,22 @@ class BookController extends Controller
             ], 500);
         }
     } // agora não posso inserir um número de páginas maior do que a quantidade total de páginas do livro, e também altera os campos 'started_at' e 'finished_at' da tabela 'books'
+
+    public function reading()
+    {
+        try {
+            $books = Book::whereNotNull('started_at')
+                ->whereNull('finished_at')
+                ->get();
+
+            return response()->json([
+                'message' => 'Books retrieved successfully',
+                'data' => $books,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
