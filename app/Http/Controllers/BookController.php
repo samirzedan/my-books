@@ -113,4 +113,96 @@ class BookController extends Controller
             ], 500);
         }
     }
+
+    public function changeCurrentPage(Request $request, $id)
+    {
+        try {
+            $this->validate($request, [
+                'current_page' => 'required|numeric|integer|min:1',
+            ]);
+
+            $book = Book::findOrFail($id);
+
+            $book->update([
+                'current_page' => $request->current_page,
+            ]);
+
+            return response()->json([
+                'message' => 'Book current page changed successfully',
+                'data' => $book,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    } // ainda posso inserir um número de páginas maior do que a quantidade total de páginas do livro
+
+    public function changeCurrentPage2(Request $request, $id)
+    {
+        try {
+            $this->validate($request, [
+                'current_page' => 'required|numeric|integer|min:1',
+            ]);
+
+            $book = Book::findOrFail($id);
+
+            if ($request->current_page > $book->total_pages) {
+                return response()->json([
+                    'message' => 'The current page cannot be greater than the total number of pages',
+                ], 400);
+            }
+
+            $book->update([
+                'current_page' => $request->current_page,
+            ]);
+
+            return response()->json([
+                'message' => 'Book current page changed successfully',
+                'data' => $book,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    } // agora não posso inserir um número de páginas maior do que a quantidade total de páginas do livro, porém ainda não altera os campos 'started_at' e 'finished_at' da tabela 'books'
+
+    public function changeCurrentPage3(Request $request, $id)
+    {
+        try {
+            $this->validate($request, [
+                'current_page' => 'required|numeric|integer|min:1',
+            ]);
+
+            $book = Book::findOrFail($id);
+
+            if ($request->current_page > $book->total_pages) {
+                return response()->json([
+                    'message' => 'The current page cannot be greater than the total number of pages',
+                ], 400);
+            }
+
+            $book->current_page = $request->current_page;
+
+            if ($book->started_at == null) {
+                $book->started_at = now();
+            }
+
+            if ($request->current_page == $book->total_pages) {
+                $book->finished_at = now();
+            }
+
+            $book->save();
+
+            return response()->json([
+                'message' => 'Book current page changed successfully',
+                'data' => $book,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    } // agora não posso inserir um número de páginas maior do que a quantidade total de páginas do livro, e também altera os campos 'started_at' e 'finished_at' da tabela 'books'
 }

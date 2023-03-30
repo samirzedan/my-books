@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('author')->nullable();
             $table->unsignedInteger('total_pages');
-            $table->unsignedInteger('current_page')->default(0);
+            $table->unsignedInteger('current_page')->default(1);
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();

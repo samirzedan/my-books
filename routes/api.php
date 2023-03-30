@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::apiResource('books', BookController::class);//->only('index', 'show', 'store', 'update', 'destroy');
+Route::patch('books/{id}/change-current-page', [BookController::class, 'changeCurrentPage3']);
